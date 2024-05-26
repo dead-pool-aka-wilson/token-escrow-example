@@ -1,0 +1,18 @@
+[package]
+name = "token-escrow"
+version = "0.1.0"
+edition = "2021"
+
+
+[features]
+no-entrypoint = []
+
+[dependencies]
+solana-program = "=1.18.14"
+spl-token = {version = "=4.0.1", features = ["no-entrypoint"]}
+spl-associated-token-account = "3.0.2"
+borsh = { version = "=1.2.1", features = ["derive", "unstable__schema"] }
+thiserror = "=1.0.57"
+
+[lib]
+crate-type = ["cdylib", "lib"]
