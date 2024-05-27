@@ -404,7 +404,6 @@ describe("token-escrow test", () => {
 
     const { response: response2 } = await metaplex
       .nfts()
-
       .createSft({
         uri: uribuy,
         name: token2.slice(0, 6),
