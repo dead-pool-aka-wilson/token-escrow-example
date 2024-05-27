@@ -7,20 +7,24 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+    "test": "yarn run ts-mocha -p ./tsconfig.json -t 2000000 tests/**/*.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@metaplex-foundation/js": "^0.20.1",
     "@solana/spl-token": "^0.4.6",
     "@solana/web3.js": "^1.91.8",
-    "borsh": "^2.0.0"
+    "@types/bn.js": "^5.1.5",
+    "@types/node": "^20.12.12",
+    "openai": "^4.47.1"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.16",
     "@types/mocha": "^10.0.6",
     "mocha": "^10.4.0",
     "ts-mocha": "^10.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^4.3.5"
   }
 }

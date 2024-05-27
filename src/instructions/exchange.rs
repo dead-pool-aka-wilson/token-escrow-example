@@ -13,13 +13,56 @@ use spl_token::state::{Account as TokenAccount, Mint};
 
 use crate::{error::EscrowError, state::Escrow};
 
+#[derive(Debug)]
+pub struct ExchangeAccount {
+    authority: Pubkey,
+    taker: Pubkey,
+    taker_sell_mint: Pubkey,
+    taker_buy_mint: Pubkey,
+    taker_sell_mint_ata: Pubkey,
+    taker_buy_mint_ata: Pubkey,
+    send_token_account: Pubkey,
+    escrow_account: Pubkey,
+    escrow_token_account: Pubkey,
+    token_program: Pubkey,
+}
+
+impl ExchangeAccount {
+    pub fn new(
+        authority: Pubkey,
+        taker: Pubkey,
+        taker_sell_mint: Pubkey,
+        taker_buy_mint: Pubkey,
+        taker_sell_mint_ata: Pubkey,
+        taker_buy_mint_ata: Pubkey,
+        send_token_account: Pubkey,
+        escrow_account: Pubkey,
+        escrow_token_account: Pubkey,
+        token_program: Pubkey,
+    ) -> Self {
+        Self {
+            authority,
+            taker,
+            taker_sell_mint,
+            taker_buy_mint,
+            taker_sell_mint_ata,
+            taker_buy_mint_ata,
+            send_token_account,
+            escrow_account,
+            escrow_token_account,
+            token_program,
+        }
+    }
+}
+
 pub fn process_exchange(
     accounts: &[AccountInfo],
     sell_amount: u64,
     buy_amount: u64,
-    program_id: &Pubkey,
+    _program_id: &Pubkey,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
+    msg!("Reading Accounts List...");
 
     let authority = next_account_info(account_info_iter)?;
     let taker = next_account_info(account_info_iter)?;
@@ -41,7 +84,24 @@ pub fn process_exchange(
     let escrow_token_account_info = TokenAccount::unpack(&escrow_token_account.try_borrow_data()?)?;
 
     let token_program = next_account_info(account_info_iter)?;
-    let system_program = next_account_info(account_info_iter)?;
+
+    msg!("Accounts Read Finished...");
+
+    msg!(
+        "{:?}",
+        ExchangeAccount::new(
+            *authority.key,
+            *taker.key,
+            *taker_sell_mint.key,
+            *taker_buy_mint.key,
+            *taker_sell_mint_ata.key,
+            *taker_buy_mint_ata.key,
+            *send_token_account.key,
+            *escrow_account.key,
+            *escrow_token_account.key,
+            *token_program.key,
+        )
+    );
 
     if buy_amount != escrow_token_account_info.amount {
         return Err(EscrowError::ExpectedAmountMismatch.into());
@@ -98,8 +158,6 @@ pub fn process_exchange(
         buy_amount,
         buy_mint_decimal,
     )?;
-
-    let prefix: &[u8] = b"escrow";
 
     msg!("Calling the token program to transfer tokens to the taker...");
     invoke_signed(
